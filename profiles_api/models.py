@@ -144,10 +144,12 @@ dealing with operations on the model instance and non-query related logic.
 
 
 """
-Yes, `BaseUserManager` in Django includes the methods `create_user` and `create_superuser`. These are helper methods that simplify the creation of user and superuser instances, respectively. Here’s a brief explanation and typical syntax for each:
+Yes, `BaseUserManager` in Django includes the methods `create_user` and `create_superuser`. These are helper methods that simplify the creation of user and
+superuser instances, respectively. Here’s a brief explanation and typical syntax for each:
 
 ### 1. `create_user`
-This method is used to create a regular user. When extending `BaseUserManager`, you usually override this method to handle the user creation process according to your application’s user model requirements.
+This method is used to create a regular user. When extending `BaseUserManager`, you usually override this method to handle the user creation process according
+to your application’s user model requirements.
 
 **Syntax:**
 ```python
@@ -163,7 +165,8 @@ def create_user(self, username, email=None, password=None, **extra_fields):
 ```
 
 ### 2. `create_superuser`
-This method is used for creating a superuser who has all permissions. This method also typically calls `create_user` internally but sets additional attributes such as `is_staff` and `is_superuser` to `True`.
+This method is used for creating a superuser who has all permissions. This method also typically calls `create_user` internally but sets additional attributes
+such as `is_staff` and `is_superuser` to `True`.
 
 **Syntax:**
 ```python
@@ -184,5 +187,7 @@ def create_superuser(self, username, email, password=None, **extra_fields):
 - **`set_password`**: This is another method from Django’s user model that sets the user’s hashed password.
 - **`save`**: This method saves the user instance to the database. The `using=self._db` ensures that the correct database alias is used, especially useful in multi-database setups.
 
-When you define these methods in your custom user manager, you tailor the user creation logic to your specific needs, often modifying parameters and adding additional fields as necessary.
+When you define these methods in your custom user manager, you tailor the user creation logic to your specific needs, often modifying parameters and adding
+additional fields as necessary.
+
 """

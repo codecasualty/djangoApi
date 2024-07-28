@@ -74,4 +74,24 @@ when to use apiviews
 1) need full control over the logic like updating multiple datasources in one call
 processing files and rendering a synchronous response
 calling other api/services in same requests
-when we need access to local files or data 
+when we need access to local files or data
+
+what are viewsets
+viewsets accept functions to common end Points
+list :- to get list of Objects
+create:- creting new Objects
+retrieve :- to get specific Objects'
+update :- to updating Objects
+partial_update ;- updating part of objects
+destroy :- for deleting Objects
+
+takes care of alot of typical logic for us
+perfect for standard database operations
+fastest way to make database connections
+
+
+when to use viewsets
+a simple crud interface to your database
+a quick and simple api writing
+little to no customizations on logic
+working with standard data strucutres

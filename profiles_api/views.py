@@ -1,13 +1,18 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 # Response is standard response which django is expecting while calling our api
-
+from rest_framework import status
 # This helps us in creating apiview class on basis of apiview class
+from rest_framework import viewsets
+from profiles_api import serializers
+
+# this if for request response of our code
+
 class HelloApiView(APIView):
     """ test api view"""
     # need to pass self as caling object, request is something that we receive from django application,
      # so whenever we make get request this function will be called
-
+    serializer_class = serializers.HelloSerializer
     def get(self, request , format= None):
         """return a list of apiview features"""
         an_apiview = [
@@ -20,6 +25,71 @@ class HelloApiView(APIView):
         # respnose object needs dict or list, to convert it to json
         return Response({'message' : 'Hello world' , 'an-apiview' : an_apiview})
 
+        # serializer is feature form DRF which allows us to convert datainputs to python frameworks and viceversa
+        # its kinda similar to djanog forms which will accept various datainputs
+        # this will be helpfull for post and update api Methods
+
+    def post(self , request):
+        serializer = self.serializer_class(data = request.data)
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'Hello {name}'
+            return Response({'message' : message})
+        else:
+            return Response(
+            serializer.errors,
+            status = status.HTTP_400_BAD_REQUEST
+            )
+
+    def put(self, request, pk = None):
+        # so here we update the complete object with particular primary key, here pk is none but that only mean we dont support primary key hereby
+        return Response({'method','PUT'})
+
+    def patch(self, request , pk = None):
+        # this is for partial update , so now lets you just passed last_name, then it will update only lastname of given primary key entry
+        # but in put if you passed only lastname it will completely remove the firstname of particular primary key entry
+        return Response({'method' , 'PATCH'})
+
+    def delete(self, request , pk = None):
+        # this will delete the entry completely from databases
+        return Response({'method' , 'DELETE'})
+
+class HelloViewSet(viewsets.ViewSet):
+    serializer_class =  serializers.HelloSerializer
+    def list(self, request):
+        a_viewset = [
+            'Uses actions like list , create, retrieve, update , partial_update',
+            'Automatically maps to URLs using routers',
+            'Provides more functionality with less code',
+
+        ]
+
+        return Response({'message' : 'Hello' , 'a_viewset' : a_viewset})
+
+    def create(self , request):
+        serializer  = serializer_class(data = request.data)
+
+        if serializer.is_valid():
+            name = serializer.validated_data.get('name')
+            message = f'hello {name}'
+            return Response({'message' : message})
+        else:
+            return Response (
+                serializer.errors,
+                status = status.HTTP_400_BAD_REQUEST
+            )
+
+    def retrieve(self, request , pk = None):
+        return Response({'http_method' : 'GET'})
+
+    def update(self , request , pk = None):
+        return Response({'http_method': 'PUT'})
+
+    def partial_update(self ,request , pk = None):
+        return Response({'http_method' : 'PATCH'})
+
+    def destroy(self , request , pk = None):
+        return Response({'http_method': 'DELETE'})
 
 
 """
@@ -115,4 +185,96 @@ This route is linked to the `HelloApiView` class through the `as_view()` method,
 
 By visiting the specified URL, the user effectively triggers this sequence, leading to a clear demonstration of how DRF handles API
 requests and produces structured responses suitable for integration with frontend technologies or other clients expecting JSON data.
+
+
+
+The line `serializer_class = serializers.HelloSerializer` defines a class variable that references the `HelloSerializer` class from the `serializers` module.
+This class is likely a custom serializer defined to handle data validation and serialization for specific data, such as a `name` field in your example.
+
+Here’s a breakdown of the rest of the code and your questions:
+
+### What is `serializer` here?
+
+In the given method `post`, `serializer` is an instance of `HelloSerializer`. This instance is created by passing `request.data` to the serializer. `request.data`
+contains the data submitted in the HTTP POST request. The serializer instance is then responsible for converting this data into Python data types, validating it against
+the serializer's fields, and preparing it for further processing or saving to the database.
+
+### Does `serializer` have inbuilt methods `isValid()` and `validated_data.get()`?
+
+Yes, in Django's REST Framework:
+
+- **`isValid()`**: This should actually be `is_valid()`. It's a method used to validate the data. It checks whether the data provided to the serializer adheres to
+the rules specified in the serializer (like field requirements, data types, etc.). It returns `True` if the data is valid, otherwise `False`.
+
+- **`validated_data`**: This is an attribute, not a method, that contains the data that was deemed valid after calling `is_valid()`. This data is then accessible
+in a dictionary-like format.
+
+- **`validated_data.get('name')`**: This method retrieves the `name` value from the validated data if it exists, otherwise it returns `None` (or another default
+value if specified).
+
+### What does `validated_data` mean?
+
+`validated_data` is a dictionary-like attribute of the serializer instance that stores the clean and validated data. This data is safe to use for further processing
+or saving to a database because it conforms to the validation rules defined in the serializer. After you call `is_valid()`, this attribute is populated with the data that passed validation checks.
+
+### Corrected Code Explanation
+
+```python
+def post(self, request):
+    serializer = self.serializer_class(data=request.data)  # Create an instance of the serializer with incoming request data
+    if serializer.is_valid():  # Validate the data
+        name = serializer.validated_data.get('name')  # Retrieve the 'name' field from validated data if validation passed
+        message = f'Hello {name}'
+        return Response({'message': message})
+    else:
+        return Response(
+            serializer.errors,  # Return any errors encountered during validation
+            status=status.HTTP_400_BAD_REQUEST  # Use HTTP 400 instead of 404 for client-side input errors
+        )
+```
+Here, the method checks if the data is valid using `is_valid()` and uses the clean, validated data if it is. If the data isn’t valid, it returns the errors encountered
+during validation. Note the change from `HTTP_404_BAD_REQUEST` to `HTTP_400_BAD_REQUEST` as 400 is more appropriate for data validation errors.
+
+
+### What is a ViewSet?
+
+A `ViewSet` in Django REST Framework (DRF) is a class that provides the functionality of a set of similar views, and is used for handling common
+CRUD (Create, Read, Update, Delete) operations in a more organized way. It abstracts the logic of the standard actions that can be performed on a particular model.
+This can make the code more concise and easier to maintain, especially for simple CRUD interfaces.
+
+### How does it work?
+
+`ViewSet` classes don't provide any method handlers such as `.get()` or `.post()` for specific HTTP methods. Instead, they provide actions such as
+`.list()`, `.create()`, `.retrieve()`, `.update()`, and `.partial_update()`, which correspond to standard HTTP methods:
+- `list()`: GET requests to retrieve a list of objects.
+- `create()`: POST requests to create new objects.
+- `retrieve()`: GET requests to retrieve a single object by an ID.
+- `update()`: PUT requests to update an object completely.
+- `partial_update()`: PATCH requests to update parts of an object.
+- `destroy()`: DELETE requests to delete an object.
+
+These actions are automatically routed when using routers provided by DRF, which automatically set up the URLs associated with the viewset actions.
+
+### Differences Between ViewSets and APIViews
+
+- **Routing**:
+  - `APIView` requires explicit mapping of HTTP methods to class methods in your URL configuration. For each different type of request (GET, POST, etc.),
+   you must define how it is handled in your views.py file.
+  - `ViewSet` automatically sets up URL routes using DRF’s routers. A router checks the incoming request method and routes it to the appropriate action in
+  the viewset, significantly simplifying URL configuration.
+
+- **Code Simplicity**:
+  - With `APIView`, you typically have to write more method-specific code to handle different HTTP requests. This includes defining separate classes or
+   methods for different CRUD operations on the same resource.
+  - `ViewSet` combines the logic of dealing with common data patterns into a single class where different operations are handled by different
+  well-defined actions, reducing the amount of code you need to write.
+
+- **Use Case**:
+  - `APIView` is suitable when you need to perform custom processing and have more control over the logic, or when your API doesn’t neatly fit into the
+  standard CRUD operations.
+  - `ViewSet` is ideal for straightforward CRUD interfaces on a database model and when you want to reduce the amount of boilerplate code you write for
+  an API that adheres closely to standard database operations.
+
+
+
 """
