@@ -40,3 +40,9 @@ class Book(models.Model):
         return self.title
 
 In this example, Book.objects would use the default manager, providing access to all books, whereas Book.available_books would use the AvailableBookManager, which filters the books to return only those that are available.
+
+
+Django admin allows use to create adminstrative access to our database.This helps us to inspect the database, see models and modify them
+to create a superuser we user django cli we type command
+python manage.py createsuperuser
+and enter the required details and then it will help us in accessing the database using this super_user

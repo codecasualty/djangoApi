@@ -19,7 +19,7 @@ class UserProfileManager(BaseUserManager):
         user.save(using = self._db)
         return user
 
-    def super_user(self, email , name , password):
+    def create_superuser(self, email , name , password):
         user = self.create_user(email , name , password)
         # here we dont need to pass self as , any function which is present in same class dont need to pass self
         # is_superuser is provided by permission mixin
@@ -140,4 +140,49 @@ Enhancing Readability: Custom managers can make your code more descriptive and r
 
 Encapsulation: Managers help encapsulate the database access logic within the model and keep your model methods higher-level,
 dealing with operations on the model instance and non-query related logic.
+"""
+
+
+"""
+Yes, `BaseUserManager` in Django includes the methods `create_user` and `create_superuser`. These are helper methods that simplify the creation of user and superuser instances, respectively. Here’s a brief explanation and typical syntax for each:
+
+### 1. `create_user`
+This method is used to create a regular user. When extending `BaseUserManager`, you usually override this method to handle the user creation process according to your application’s user model requirements.
+
+**Syntax:**
+```python
+def create_user(self, username, email=None, password=None, **extra_fields):
+    # Ensure that an email address is set
+    if not email:
+        raise ValueError('The given email must be set')
+    email = self.normalize_email(email)
+    user = self.model(username=username, email=email, **extra_fields)
+    user.set_password(password)
+    user.save(using=self._db)
+    return user
+```
+
+### 2. `create_superuser`
+This method is used for creating a superuser who has all permissions. This method also typically calls `create_user` internally but sets additional attributes such as `is_staff` and `is_superuser` to `True`.
+
+**Syntax:**
+```python
+def create_superuser(self, username, email, password=None, **extra_fields):
+    extra_fields.setdefault('is_staff', True)
+    extra_fields.setdefault('is_superuser', True)
+
+    if extra_fields.get('is_staff') is not True:
+        raise ValueError('Superuser must have is_staff=True.')
+    if extra_fields.get('is_superuser') is not True:
+        raise ValueError('Superuser must have is_superuser=True.')
+
+    return self.create_user(username, email, password, **extra_fields)
+```
+
+### Important Points:
+- **`normalize_email`**: This utility method is part of `BaseUserManager` and is used to normalize the email address by lowercasing the domain part of it.
+- **`set_password`**: This is another method from Django’s user model that sets the user’s hashed password.
+- **`save`**: This method saves the user instance to the database. The `using=self._db` ensures that the correct database alias is used, especially useful in multi-database setups.
+
+When you define these methods in your custom user manager, you tailor the user creation logic to your specific needs, often modifying parameters and adding additional fields as necessary.
 """
