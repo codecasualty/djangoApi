@@ -22,7 +22,7 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
-
+```
 
 Model Manager in Django
 A model manager is an interface through which Django models interact with the database. It is the bridge between your Django model objects and the database. Managers are Django's way to perform database queries. Each Django model has at least one manager, and custom managers can be created to extend or modify the default manager behavior.
@@ -44,7 +44,7 @@ class Book(models.Model):
 
     def __str__(self):
         return self.title
-
+```
 In this example, Book.objects would use the default manager, providing access to all books, whereas Book.available_books would use the AvailableBookManager, which filters the books to return only those that are available.
 
 
