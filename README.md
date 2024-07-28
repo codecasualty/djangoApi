@@ -1,12 +1,17 @@
 # Profile REST API
 profileS REST API
 
+to set push changes to github using PAT
+git remote set-url origin https://<YOUR_TOKEN>@github.com/codecasualty/djangoApi.git
+
+
 There will be some binary files which should not be commited,python binary files, thus we add in git ignore files
 
 Model in Django
 A model in Django is a Python class that subclasses django.db.models.Model and represents a table in your database. Each attribute of the model class represents a field of the table or a relationship between tables. The model is the single, definitive source of truth about your data. It contains the essential fields and behaviors of the data you’re storing. Django follows the DRY Principle, so the model is also responsible for defining the database schema (fields and relationships), with migrations generated based on changes in the model to keep the database in sync.
 
 Example of a Django Model:
+```python
 from django.db import models
 
 class Book(models.Model):
@@ -22,6 +27,7 @@ class Book(models.Model):
 Model Manager in Django
 A model manager is an interface through which Django models interact with the database. It is the bridge between your Django model objects and the database. Managers are Django's way to perform database queries. Each Django model has at least one manager, and custom managers can be created to extend or modify the default manager behavior.
 
+```python
 class AvailableBookManager(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(is_available=True)
