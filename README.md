@@ -1,5 +1,5 @@
 # Profile REST API
-profileS REST API
+profile REST API
 
 to set push changes to github using PAT
 git remote set-url origin https://<YOUR_TOKEN>@github.com/codecasualty/djangoApi.git
@@ -52,3 +52,26 @@ Django admin allows use to create adminstrative access to our database.This help
 to create a superuser we user django cli we type command
 python manage.py createsuperuser
 and enter the required details and then it will help us in accessing the database using this super_user
+
+
+helper class to create our api endpoints
+apiview
+viewset
+
+apiview most basic , describe logic to make our endpoints
+
+uses standard http methods for functions
+like get, to get one or more items
+post to post an item
+put to update and item
+patch to partially update an item
+delete to delete an items
+
+give most control over logic, we can call other apis, helps in working with local files
+
+
+when to use apiviews
+1) need full control over the logic like updating multiple datasources in one call
+processing files and rendering a synchronous response
+calling other api/services in same requests
+when we need access to local files or data 
